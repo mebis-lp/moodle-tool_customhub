@@ -251,7 +251,7 @@ class course_publication_form extends moodleform {
         $licences = $licensemanager->get_licenses();
         $options = array();
         foreach ($licences as $license) {
-            $options[$license->shortname] = get_string($license->shortname, 'license');
+            $options[$license->shortname] = $license->shortname; //get_string($license->shortname, 'license'); // vgl. mbslicenseinfo local/mbslicenseinfo/classes/hack/core_licensemanager.php
         }
         $mform->addElement('select', 'licence', get_string('licence', 'tool_customhub'), $options);
         $mform->setDefault('licence', $defaultlicenceshortname);

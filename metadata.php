@@ -179,7 +179,7 @@ if (!empty($fromform)) {
 
     // PUBLISH ACTION
 
-    //publish the course information
+    // Publish the course information.
     $function = 'hub_register_courses';
     $params = array('courses' => array($courseinfo));
     try {
