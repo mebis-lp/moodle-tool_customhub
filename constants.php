@@ -117,3 +117,8 @@ define('HUB_HUBSCREENSHOT_FILE_TYPE', 'hubscreenshot');
  * FILE TYPE: BACKUP
  */
 define('HUB_BACKUP_FILE_TYPE', 'backup');
+
+/**
+ * Define teachSHARE instance name.
+ */
+define('HUB_TEACHSHARE_NAME', 'teachSHARE');

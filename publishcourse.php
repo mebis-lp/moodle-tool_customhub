@@ -27,18 +27,18 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
-$id = required_param('id', PARAM_INT);
-$hubname = optional_param('hubname', 0, PARAM_TEXT);
-$huburl = optional_param('huburl', 0, PARAM_URL);
+$courseid = required_param('id', PARAM_INT);
+$hubname = optional_param('hubname', '', PARAM_TEXT);
+$huburl = optional_param('huburl', '', PARAM_URL);
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
 require_login($course);
 $context = context_course::instance($course->id);
 require_capability('tool/customhub:publishcourse', $context);
-$shortname = format_string($course->shortname, true, array('context' => $context));
+$shortname = format_string($course->shortname, true, ['context' => $context]);
 
-$PAGE->set_url('/admin/tool/customhub/publishcourse.php', array('id' => $course->id));
+$PAGE->set_url('/admin/tool/customhub/publishcourse.php', ['courseid' => $course->id]);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
@@ -59,7 +59,7 @@ $confirmmessage = '';
 
 //update the courses status
 $updatestatusid = optional_param('updatestatusid', false, PARAM_INT);
-if (!empty($updatestatusid) and confirm_sesskey()) {
+if (!empty($updatestatusid) && confirm_sesskey()) {
     //get the communication token from the publication
     $hub = $publicationmanager->get_registeredhub_by_publication($updatestatusid);
     if (empty($hub)) {
@@ -67,8 +67,12 @@ if (!empty($updatestatusid) and confirm_sesskey()) {
     } else {
         //get all site courses registered on this hub
         $function = 'hub_get_courses';
-        $params = array('search' => '', 'downloadable' => 1,
-            'enrollable' => 1, 'options' => array( 'allsitecourses' => 1));
+        $params = [
+            'search' => '',
+            'downloadable' => 1,
+            'enrollable' => 1,
+            'options' => ['allsitecourses' => 1]
+        ];
         $serverurl = $hub->huburl."/local/hub/webservice/webservices.php";
         require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
         $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
@@ -86,7 +90,7 @@ if (!empty($updatestatusid) and confirm_sesskey()) {
             } else {
                 $msgparams = new stdClass();
                 $msgparams->id = $sitecourse['id'];
-                $msgparams->hubname = html_writer::tag('a', $hub->hubname, array('href' => $hub->huburl));
+                $msgparams->hubname = html_writer::tag('a', $hub->hubname, ['href' => $hub->huburl]);
                 $confirmmessage .= $OUTPUT->notification(
                     get_string('detectednotexistingpublication', 'tool_customhub', $msgparams));
             }
@@ -129,7 +133,7 @@ if (!empty($cancel) and confirm_sesskey()) {
         //unpublish the publication by web service
         $registeredhub = $registrationmanager->get_registeredhub($huburl);
         $function = 'hub_unregister_courses';
-        $params = array('courseids' => array( $publication->hubcourseid));
+        $params = ['courseids' => [ $publication->hubcourseid]];
         $serverurl = $huburl."/local/hub/webservice/webservices.php";
         require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
         $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
@@ -154,8 +158,11 @@ if (!empty($cancel) and confirm_sesskey()) {
 
 //check if a course was published
 if (optional_param('published', 0, PARAM_TEXT)) {
-    $confirmmessage = $OUTPUT->notification(get_string('coursepublished', 'tool_customhub',
-        empty($hubname)?$huburl:$hubname), 'notifysuccess');
+    $confirmmessage = $OUTPUT->notification(get_string(
+        'coursepublished',
+        'tool_customhub',
+        empty($hubname) ? $huburl : $hubname
+    ), 'notifysuccess');
 }
 
 
@@ -173,4 +180,3 @@ if (!empty($publications)) {
 }
 
 echo $OUTPUT->footer();
-

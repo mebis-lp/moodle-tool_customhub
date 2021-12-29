@@ -61,6 +61,7 @@ $string['description_help'] = 'This description text will be showing in the cour
 $string['detectednotexistingpublication'] = '{$a->hubname} is listing a course that does not exist any more. Alert this hub administrator that the publication number {$a->id} should be removed.';
 $string['educationallevel'] = 'Educational level';
 $string['educationallevel_help'] = 'Select the most appropriate educational level that the course fits into.';
+$string['edulevel'] = 'Any';
 $string['edulevelassociation'] = 'Association';
 $string['edulevelcorporate'] = 'Corporate';
 $string['edulevelgovernment'] = 'Government';

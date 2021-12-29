@@ -83,21 +83,41 @@ class renderer extends plugin_renderer_base {
     public function publicationselector($courseid) {
         $text = '';
 
-        $advertiseurl = new moodle_url("/admin/tool/customhub/hubselector.php",
-            array('sesskey' => sesskey(), 'id' => $courseid, 'advertise' => true));
+        $advertiseurl = new moodle_url(
+            "/admin/tool/customhub/hubselector.php",
+            [
+                'sesskey' => sesskey(),
+                'id' => $courseid,
+                'courseid' => $courseid,
+                'advertise' => true
+            ]
+        );
         $advertisebutton = new single_button($advertiseurl, get_string('advertise', 'tool_customhub'));
         $text .= $this->output->render($advertisebutton);
-        $text .= html_writer::tag('div', get_string('advertisepublication_help', 'tool_customhub'),
-            array('class' => 'publishhelp'));
+        $text .= html_writer::tag(
+            'div',
+            get_string('advertisepublication_help', 'tool_customhub'),
+            ['class' => 'publishhelp']
+        );
 
         $text .= html_writer::empty_tag('br');  /// TODO Delete
 
-        $uploadurl = new moodle_url("/admin/tool/customhub/hubselector.php",
-            array('sesskey' => sesskey(), 'id' => $courseid, 'share' => true));
+        $uploadurl = new moodle_url(
+            "/admin/tool/customhub/hubselector.php",
+            [
+                'sesskey' => sesskey(),
+                'id' => $courseid,
+                'courseid' => $courseid,
+                'share' => true
+            ]
+        );
         $uploadbutton = new single_button($uploadurl, get_string('share', 'tool_customhub'));
         $text .= $this->output->render($uploadbutton);
-        $text .= html_writer::tag('div', get_string('sharepublication_help', 'tool_customhub'),
-            array('class' => 'publishhelp'));
+        $text .= html_writer::tag(
+            'div',
+            get_string('sharepublication_help', 'tool_customhub'),
+            ['class' => 'publishhelp']
+        );
 
         return $text;
     }
