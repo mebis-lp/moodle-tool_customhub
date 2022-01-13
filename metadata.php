@@ -26,7 +26,7 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/customhub/constants.php');
-// print_r($_GET);die;
+
 //check user access capability to this page
 $courseid = required_param('courseid', PARAM_INT);
 
@@ -62,8 +62,6 @@ if (empty($huburl) or !confirm_sesskey()) {
 
 $advertise = optional_param('advertise', false, PARAM_BOOL); // Share to enrol.
 $share = optional_param('share', false, PARAM_BOOL); // Share to download.
-
-// print_r($huburl);print_r($share);die;
 
 // if ( strpos($huburl, strtolower(HUB_TEACHSHARE_NAME)) !== false &&  $share) {
 //     // $coursepublicationform = new tool_customhub\form\course_publication_form(
@@ -121,7 +119,6 @@ $coursepublicationform = new tool_customhub\form\course_publication_form(
 // }
 
 $fromform = $coursepublicationform->get_data();
-// print_r($fromform);die;
 //retrieve the token to call the hub
 $registrationmanager = new tool_customhub\registration_manager();
 $registeredhub = $registrationmanager->get_registeredhub($huburl);
@@ -132,11 +129,6 @@ require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
 $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $registeredhub->token);
 
 if (!empty($fromform)) {
-//     print_r($fromform);die;
-//     foreach($fromform as $key => $value) {
-//         echo $key . " => ". json_encode($value). "\n";
-//     }
-// die;
     $publicationmanager = new tool_customhub\course_publish_manager();
 
     //retrieve the course information
@@ -252,7 +244,6 @@ if (!empty($fromform)) {
         'courses' => [$courseinfo],
         // 'wstoken' => $registeredhub->token,
     ];
-    // print_r($params);die;
     try {
         $courseids = $xmlrpcclient->call($function, $params);
     } catch (Exception $e) {
@@ -305,6 +296,7 @@ if (!empty($fromform)) {
     }
 
     // Redirect to the backup process page.
+    // var_dump($share);die;
     if ($share) {
         $params = [
             'sesskey' => sesskey(),

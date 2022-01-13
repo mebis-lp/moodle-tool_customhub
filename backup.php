@@ -77,7 +77,7 @@ $filerecord->contextid = CONTEXT_SYSTEM;
 $filerecord->filearea  = 'teachshare';
 $filerecord->filename  = $filename;
 $filerecord->filepath  = '/';
-$filerecord->itemid = 15021984;
+$filerecord->itemid = file_get_unused_draft_itemid();
 
 $fs = new file_storage();
 $backupfile = $fs->create_file_from_pathname($filerecord, $backupfiledir);
@@ -100,9 +100,6 @@ $backupfile = $fs->create_file_from_pathname($filerecord, $backupfiledir);
 // $backupfile = $backupfile['backup_destination'];
 //END backup processing
 
-// $fo = fopen(__DIR__ . "/../../../local/hub/log.txt", "a+");
-// fwrite($fo, "\n" . json_encode($backupfile));
-
 //retrieve the token to call the hub
 $registrationmanager = new tool_customhub\registration_manager();
 $registeredhub = $registrationmanager->get_registeredhub($huburl);
@@ -118,10 +115,6 @@ if (ob_get_level()) {
 flush();
 
 // Send backup file to the hub.
-// fwrite($fo, "\n Backup send start.");
-// fwrite($fo, "\n Backup-Token: " . $registeredhub->token);
-// fwrite($fo, "\n Backup-FilePath: " . $backupfiledir);
-
 $ch = curl_init();
 
 $params = [];
@@ -144,11 +137,9 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
 $response = curl_exec($ch);
 curl_close($ch);
-// fwrite($fo, "\n Response:" . json_encode($response));
 
 // Delete the temp backup file from user_tohub aera.
 $backupfile->delete();
-// $bc->destroy();
 
 // Output sending success.
 echo $renderer->sentbackupinfo($id, $huburl, $hubname);
