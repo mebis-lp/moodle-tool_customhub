@@ -48,28 +48,11 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 
-//BEGIN backup processing
-// $backupid = optional_param('backup', false, PARAM_ALPHANUM);
-// if (!($bc = backup_ui::load_controller($backupid))) {
-//     $bc = new backup_controller(backup::TYPE_1COURSE, $id, backup::FORMAT_MOODLE,
-//         backup::INTERACTIVE_YES, backup::MODE_HUB, $USER->id);
-// }
-// $backup = new backup_ui(
-//     $bc,
-//     [
-//         'id' => $id,
-//         'hubcourseid' => $hubcourseid,
-//         'huburl' => $huburl,
-//         'hubname' => $hubname
-//     ]
-// );
-// $backup->process();
-// if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
-//     $backup->execute();
-// } else {
-//     $backup->save_controller();
-// }
+// BEGIN backup processing.
+
+ob_start();
 list($filename, $backupfiledir) = \tool_customhub\local\backup_helper::create_backup($course->id);
+ob_end_clean();
 
 $filerecord = new stdClass();
 $filerecord->component = 'tool_customhub';
@@ -82,23 +65,7 @@ $filerecord->itemid = file_get_unused_draft_itemid();
 $fs = new file_storage();
 $backupfile = $fs->create_file_from_pathname($filerecord, $backupfiledir);
 
-// if ($backup->get_stage() !== backup_ui::STAGE_COMPLETE) {
-//     $renderer = $PAGE->get_renderer('core', 'backup');
-//     echo $OUTPUT->header();
-//     echo $OUTPUT->heading(get_string('publishcourseon', 'tool_customhub', !empty($hubname) ? $hubname : $huburl), 3, 'main');
-//     if ($backup->enforce_changed_dependencies()) {
-//         debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
-//     }
-//     echo $renderer->progress_bar($backup->get_progress_bar());
-//     echo $backup->display($renderer);
-//     echo $OUTPUT->footer();
-//     die();
-// }
-
-//$backupfile = $backup->get_stage_results();
-// $backupfile = $bc->get_results();
-// $backupfile = $backupfile['backup_destination'];
-//END backup processing
+// END backup processing.
 
 //retrieve the token to call the hub
 $registrationmanager = new tool_customhub\registration_manager();

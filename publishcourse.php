@@ -83,6 +83,7 @@ if (!empty($updatestatusid) && confirm_sesskey()) {
         foreach ($sitecourses as $sitecourse) {
             //get the publication from the hub course id
             $publication = $publicationmanager->get_publication($sitecourse['id'], $hub->huburl);
+
             if (!empty($publication)) {
                 $publication->status = $sitecourse['privacy'];
                 $publication->timechecked = time();

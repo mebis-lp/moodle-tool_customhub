@@ -111,7 +111,7 @@ class course_publication_form extends moodleform {
             try {
                 $result = $xmlrpcclient->call($function, $params);
                 $publishedcourses = $result['courses'];
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $error = $OUTPUT->notification(get_string('errorcourseinfo', 'tool_customhub', $e->getMessage()));
                 $mform->addElement('static', 'errorhub', '', $error);
             }
@@ -350,8 +350,6 @@ class course_publication_form extends moodleform {
         $this->set_data($data);
 
         if ($share) {
-            // $mform->addElement('header', 'coursemetadata', get_string('coursemetadata', 'block_mbsteachshare'));
-
             $mform->addElement(
                 'text',
                 'name',
@@ -445,8 +443,6 @@ class course_publication_form extends moodleform {
             if ($this->_customdata['edittemplate'] !== true) {
                 $this->define_legalinfo_fieldset();
             }
-
-            // $this->add_action_buttons(true, get_string('sendforreviewing', 'block_mbsteachshare'));
         }
         $this->add_action_buttons(false, $buttonlabel);
     }
@@ -492,11 +488,11 @@ class course_publication_form extends moodleform {
     }
 
     public function validation($data, $files) {
-        global $CFG;
 
         $errors = array();
 
-        if ($this->_form->_submitValues['subject'] == 'none') {
+        // TO DISCUSS: Braucht's das wirklich?
+        if ($data['share'] && $this->_form->_submitValues['subject'] == 'none') {
             $errors['subject'] = get_string('mustselectsubject', 'tool_customhub');
         }
 

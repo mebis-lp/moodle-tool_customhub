@@ -138,20 +138,30 @@ class renderer extends plugin_renderer_base {
 
             $updatebuttonhtml = '';
 
-            $params = array('sesskey' => sesskey(), 'id' => $publication->courseid,
+            $params = [
+                'sesskey' => sesskey(),
+                'id' => $publication->courseid,
                 'hubcourseid' => $publication->hubcourseid,
-                'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
-                'cancel' => true, 'publicationid' => $publication->id,
-                'timepublished' => $publication->timepublished);
+                'huburl' => $publication->huburl,
+                'hubname' => $publication->hubname,
+                'cancel' => true,
+                'publicationid' => $publication->id,
+                'timepublished' => $publication->timepublished
+            ];
             $cancelurl = new moodle_url("/admin/tool/customhub/publishcourse.php", $params);
             $cancelbutton = new single_button($cancelurl, get_string('removefromhub', 'tool_customhub'));
             $cancelbutton->class = 'centeredbutton';
             $cancelbuttonhtml = $this->output->render($cancelbutton);
 
             if ($publication->enrollable) {
-                $params = array('sesskey' => sesskey(), 'id' => $publication->courseid,
-                    'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
-                    'share' => !$publication->enrollable, 'advertise' => $publication->enrollable);
+                $params = [
+                    'sesskey' => sesskey(),
+                    'courseid' => $publication->courseid,
+                    'huburl' => $publication->huburl,
+                    'hubname' => $publication->hubname,
+                    'share' => !$publication->enrollable,
+                    'advertise' => $publication->enrollable,
+                ];
                 $updateurl = new moodle_url("/admin/tool/customhub/metadata.php", $params);
                 $updatebutton = new single_button($updateurl, get_string('update', 'tool_customhub'));
                 $updatebutton->class = 'centeredbutton';

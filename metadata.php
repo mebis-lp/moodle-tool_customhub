@@ -45,7 +45,7 @@ if (!extension_loaded('xmlrpc')) {
     $errornotification = $OUTPUT->doc_link('admin/environment/php_extension/xmlrpc', '');
     $errornotification .= get_string('xmlrpcdisabledpublish', 'tool_customhub');
     $context = context_course::instance($course->id);
-    $shortname = format_string($course->shortname, true, array('context' => $context));
+    $shortname = format_string($course->shortname, true, ['context' => $context]);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('publishcourse', 'tool_customhub', $shortname), 3, 'main');
     echo $OUTPUT->notification($errornotification);
@@ -143,38 +143,51 @@ if (!empty($fromform)) {
     // $courseinfo->coverage = $fromform->coverage;
     $courseinfo->creatorname = $fromform->creatorname;
     // $courseinfo->licenceshortname = $fromform->licence;
-    $courseinfo->subject = join(",", $fromform->subject);
     $courseinfo->audience = $fromform->audience;
     // $courseinfo->educationallevel = $fromform->educationallevel;
     $creatornotes = $fromform->creatornotes;
     $courseinfo->creatornotes = $creatornotes['text'];
     $courseinfo->creatornotesformat = $creatornotes['format'];
     $courseinfo->sitecourseid = $courseid;
+    
+    if($share) {
+        $courseinfo->subject = join(",", $fromform->subject);
+        $courseinfo->schooltype = json_encode($fromform->schooltype);
+        $courseinfo->schoolyear = json_encode($fromform->schoolyear);
+        $courseinfo->withanon = $fromform->withanon;
+        $courseinfo->tags = $fromform->tags;
+        $courseinfo->license = $fromform->license;
+        $courseinfo->legalinfo_foreignstuff = $fromform->legalinfo_foreignstuff;
+        $courseinfo->legalinfo_foreinstuffchanged = $fromform->legalinfo_foreinstuffchanged;
+        $courseinfo->legalinfo_ownstuff = $fromform->legalinfo_ownstuff;
+        $courseinfo->legalinfo_audioandimages = $fromform->legalinfo_audioandimages;
+        $courseinfo->legalinfo_privatedata = $fromform->legalinfo_privatedata;
+        $courseinfo->legalinfo_termsofuse = $fromform->legalinfo_termsofuse;
+        $courseinfo->enrollable = false;
+    }
+
+    if  ($advertise) {
+        // Create enrol_lti.
+        $ltihelper = new \tool_customhub\local\lti_helper();
+        $ltitool = $ltihelper->create_lti_enrolment(get_course($courseid));
+        // print_r($ltitool);die;
+        $courseinfo->ltitool = json_encode(['secret' => $ltitool->secret]);
+        $courseinfo->courseurl = (string)\enrol_lti\helper::get_cartridge_url($ltitool);
+        $courseinfo->enrollable = true;
+    }
 
     $courseinfo->share = $fromform->share;
-    $courseinfo->schooltype = json_encode($fromform->schooltype);
-    $courseinfo->schoolyear = json_encode($fromform->schoolyear);
-    $courseinfo->withanon = $fromform->withanon;
-    $courseinfo->tags = $fromform->tags;
-    $courseinfo->license = $fromform->license;
-    $courseinfo->legalinfo_foreignstuff = $fromform->legalinfo_foreignstuff;
-    $courseinfo->legalinfo_foreinstuffchanged = $fromform->legalinfo_foreinstuffchanged;
-    $courseinfo->legalinfo_ownstuff = $fromform->legalinfo_ownstuff;
-    $courseinfo->legalinfo_audioandimages = $fromform->legalinfo_audioandimages;
-    $courseinfo->legalinfo_privatedata = $fromform->legalinfo_privatedata;
-    $courseinfo->legalinfo_termsofuse = $fromform->legalinfo_termsofuse;
-
 
     if (!empty($fromform->deletescreenshots)) {
         $courseinfo->deletescreenshots = $fromform->deletescreenshots;
     }
-    if ($share) {
-        // $courseinfo->demourl = $fromform->demourl;
-        $courseinfo->enrollable = false;
-    } else {
-        $courseinfo->courseurl = $fromform->courseurl;
-        $courseinfo->enrollable = true;
-    }
+    // if ($share) {
+    //     // $courseinfo->demourl = $fromform->demourl;
+    //     // $courseinfo->enrollable = false;
+    // } else {
+    //     // $courseinfo->courseurl = $fromform->courseurl;
+    //     // $courseinfo->enrollable = true;
+    // }
 
     //retrieve the outcomes of this course
     require_once($CFG->libdir . '/grade/grade_outcome.php');
@@ -244,6 +257,7 @@ if (!empty($fromform)) {
         'courses' => [$courseinfo],
         // 'wstoken' => $registeredhub->token,
     ];
+
     try {
         $courseids = $xmlrpcclient->call($function, $params);
     } catch (Exception $e) {
