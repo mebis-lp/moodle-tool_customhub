@@ -260,6 +260,15 @@ if (!empty($fromform)) {
 
     try {
         $courseids = $xmlrpcclient->call($function, $params);
+
+        $event = \tool_customhub\event\course_registration_finished::create(
+            [
+                'context' => context_system::instance(),
+                'other' => json_encode(['courseregids' => $courseids, 'courseinfo' => $courseinfo])
+            ]
+        );
+        $event->trigger();
+
     } catch (Exception $e) {
         throw new moodle_exception(
             'errorcoursepublish',
@@ -273,7 +282,7 @@ if (!empty($fromform)) {
         throw new moodle_exception('errorcoursewronglypublished', 'tool_customhub');
     }
 
-    //save the record into the published course table
+    // Save the record into the published course table.
     $publication = $publicationmanager->get_publication($courseids[0], $huburl);
     if (empty($publication)) {
         //if never been published or if we share, we need to save this new publication record
@@ -322,7 +331,7 @@ if (!empty($fromform)) {
         $backupprocessurl = new moodle_url("/admin/tool/customhub/backup.php", $params);
         redirect($backupprocessurl);
     } else {
-        // Redirect to the index publis page.
+        // Redirect to the index publish page.
         redirect(new moodle_url(
             '/admin/tool/customhub/publishcourse.php',
             [

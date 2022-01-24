@@ -105,6 +105,23 @@ curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
 $response = curl_exec($ch);
 curl_close($ch);
 
+if ($response) {
+    $event = \tool_customhub\event\backup_sending_success::create(
+        [
+            'context' => context_system::instance(),
+            // 'other' => json_encode(['siteinfo' => $site, 'courseinfo' => $course])
+        ]
+    );
+    $event->trigger();
+} else {
+    $event = \tool_customhub\event\backup_sending_failed::create(
+        [
+            'context' => context_system::instance(),
+            // 'other' => json_encode(['siteinfo' => $site, 'courseinfo' => $course])
+        ]
+    );
+    $event->trigger();  
+}
 // Delete the temp backup file from user_tohub aera.
 $backupfile->delete();
 

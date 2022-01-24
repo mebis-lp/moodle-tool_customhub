@@ -201,3 +201,6 @@ $string['warning'] = 'WARNING';
 $string['wrongtoken'] = 'The registration failed for some unknown reason (network?). Please try again.';
 $string['xmlrpcdisabledpublish'] = 'The XML-RPC extension is not enabled on the server. You can not publish courses or manage published courses.';
 $string['xmlrpcdisabledregistration'] = 'The XML-RPC extension is not enabled on the server. You will not be able to unregister or update your registration until you enable it.';
+$string['eventname_backup_sending_success'] = 'The backup file was successfully sent.';
+$string['eventname_backup_sending_failed'] = 'The sending of the backup file failed.';
+$string['eventname_course_registration_finished'] = 'The course was registered at the hub.';
