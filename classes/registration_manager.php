@@ -162,12 +162,7 @@ class registration_manager {
      */
     public function get_registered_on_hubs() {
         global $DB;
-        $hubs = $DB->get_records('registration_hubs', array('confirmed' => 1));
-        foreach ($hubs as $id => $hub) {
-            if ($this->is_moodlenet($hub->huburl)) {
-                unset($hubs[$id]);
-            }
-        }
+        $hubs = $DB->get_records('registration_hubs', ['confirmed' => 1]);
         return $hubs;
     }
 
