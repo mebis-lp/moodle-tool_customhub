@@ -66,7 +66,7 @@ class lti_helper {
         global $DB, $CFG;
 
         // ToDo: This is bad practice but ok for PoC.
-        set_config('allowframembedding', 1);
+        // set_config('allowframembedding', 1);
 
         if (!$enrolinstance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => self::ENROL_LTI])) {
             require_once($CFG->dirroot . '/enrol/lti/lib.php');
@@ -109,10 +109,5 @@ class lti_helper {
 
         return $DB->get_record_sql($sql, array('eid' => $enrolid), MUST_EXIST);
     }
-    
-//     $data = new stdClass();
-// $data->enrolstartdate = time();
-// $data->secret = 'secret';
-// $tool = $this->getDataGenerator()->create_lti_tool($data);
 
 }
