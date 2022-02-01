@@ -135,6 +135,7 @@ class renderer extends plugin_renderer_base {
         $brtag = html_writer::empty_tag('br');
 
         foreach ($publications as $publication) {
+            // \local_hub\debug\local_hub_debug::write_to_file($publication, 'PublicationRENDERER ');
 
             $updatebuttonhtml = '';
 

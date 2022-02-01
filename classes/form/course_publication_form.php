@@ -101,8 +101,6 @@ class course_publication_form extends moodleform {
             $options->allsitecourses = 1;
             $params = [
                 'search' => '',
-                'downloadable' => $share,
-                'enrollable' => !$share,
                 'options' => $options
             ];
             $serverurl = $huburl . "/local/hub/webservice/webservices.php";

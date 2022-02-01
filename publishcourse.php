@@ -69,26 +69,29 @@ if (!empty($updatestatusid) && confirm_sesskey()) {
         $function = 'hub_get_courses';
         $params = [
             'search' => '',
-            'downloadable' => 1,
-            'enrollable' => 1,
             'options' => ['allsitecourses' => 1]
         ];
+
         $serverurl = $hub->huburl."/local/hub/webservice/webservices.php";
         require_once($CFG->dirroot."/webservice/xmlrpc/lib.php");
         $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
         $result = $xmlrpcclient->call($function, $params);
         $sitecourses = $result['courses'];
+        // \local_hub\debug\local_hub_debug::write_to_file($result, 'All site courses: ');
 
         //update status for all these course
         foreach ($sitecourses as $sitecourse) {
             //get the publication from the hub course id
             $publication = $publicationmanager->get_publication($sitecourse['id'], $hub->huburl);
-
+            // \local_hub\debug\local_hub_debug::write_to_file($sitecourse, 'Sitecourse ');
             if (!empty($publication)) {
                 $publication->status = $sitecourse['privacy'];
                 $publication->timechecked = time();
                 $publicationmanager->update_publication($publication);
+                // \local_hub\debug\local_hub_debug::write_to_file('\n', 'Sitecourse checked. ');
             } else {
+                // \local_hub\debug\local_hub_debug::write_to_file('\n', 'Sitecourse not checked. ');
+
                 $msgparams = new stdClass();
                 $msgparams->id = $sitecourse['id'];
                 $msgparams->hubname = html_writer::tag('a', $hub->hubname, ['href' => $hub->huburl]);
