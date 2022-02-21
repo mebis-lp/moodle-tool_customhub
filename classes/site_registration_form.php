@@ -173,7 +173,7 @@ class site_registration_form extends moodleform {
         $mform->setDefault('countrycode', $country);
         $mform->setType('countrycode', PARAM_ALPHANUMEXT);
         $mform->addHelpButton('countrycode', 'sitecountry', 'tool_customhub');
-        $mform->addRule('countrycode', $strrequired, 'required', null, 'client');
+        // $mform->addRule('countrycode', $strrequired, 'required', null, 'client');
 
         $mform->addElement('text', 'geolocation', get_string('sitegeolocation', 'tool_customhub'),
             array('class' => 'registration_textfield'));
@@ -183,7 +183,7 @@ class site_registration_form extends moodleform {
 
         $mform->addElement('text', 'contactname', get_string('siteadmin', 'tool_customhub'),
             array('class' => 'registration_textfield'));
-        $mform->addRule('contactname', $strrequired, 'required', null, 'client');
+        // $mform->addRule('contactname', $strrequired, 'required', null, 'client');
         $mform->setType('contactname', PARAM_TEXT);
         $mform->setDefault('contactname', $contactname);
         $mform->addHelpButton('contactname', 'siteadmin', 'tool_customhub');
@@ -197,7 +197,7 @@ class site_registration_form extends moodleform {
 
         $mform->addElement('text', 'contactemail', get_string('siteemail', 'tool_customhub'),
             array('class' => 'registration_textfield'));
-        $mform->addRule('contactemail', $strrequired, 'required', null, 'client');
+        // $mform->addRule('contactemail', $strrequired, 'required', null, 'client');
         $mform->setType('contactemail', PARAM_EMAIL);
         $mform->setDefault('contactemail', $contactemail);
         $mform->addHelpButton('contactemail', 'siteemail', 'tool_customhub');
@@ -319,4 +319,3 @@ class site_registration_form extends moodleform {
     }
 
 }
-

@@ -25,6 +25,7 @@
 namespace tool_customhub;
 
 use stdClass;
+use \tool_customhub\local\lti_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -117,6 +118,19 @@ class course_publish_manager {
     }
 
     /**
+     * Get a publication by a condition.
+     * @param array $conditions
+     * @return object publication
+     */
+    public function get_publication_by_condition($conditions) {
+        global $DB;
+        return $DB->get_record(
+            'course_published',
+            $conditions
+        );
+    }
+
+    /**
      * Get all publication for a course
      * @param int $courseid
      * @return array of publication
@@ -152,7 +166,37 @@ class course_publish_manager {
      */
     public function delete_publication($publicationid) {
         global $DB;
+        $publication = $this->get_publication_by_condition(['id' => $publicationid]);
+        if ($publication->enrollable) {
+            $this->remove_lti_enrolment($publication->courseid);
+        }
         $DB->delete_records('course_published', array('id' => $publicationid));
+    }
+
+    /**
+     * Removes the LTI enrolment of a given publication.
+     * @param int $publicationid
+     */
+    public function remove_lti_enrolment($courseid) {
+        global $DB;
+        
+        if(empty($courseid)){
+            return;
+        }
+
+        $plugins   = enrol_get_plugins(true);
+        $instances = enrol_get_instances($courseid, false);
+
+        foreach ($instances as $instance) {
+            // With LTI_CUSTOMINT1_IDENTIFIER we take sure that we only delete enrol_lti instances created by tool_customhub.
+            if (
+                $instance->enrol == lti_helper::ENROL_LTI
+                && $instance->customint1 == lti_helper::LTI_CUSTOMINT1_IDENTIFIER
+                ) {
+                $plugin = $plugins[$instance->enrol];
+                $plugin->delete_instance($instance);
+            }
+        }
     }
 
     /**

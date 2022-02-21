@@ -83,21 +83,41 @@ class renderer extends plugin_renderer_base {
     public function publicationselector($courseid) {
         $text = '';
 
-        $advertiseurl = new moodle_url("/admin/tool/customhub/hubselector.php",
-            array('sesskey' => sesskey(), 'id' => $courseid, 'advertise' => true));
+        $advertiseurl = new moodle_url(
+            "/admin/tool/customhub/hubselector.php",
+            [
+                'sesskey' => sesskey(),
+                'id' => $courseid,
+                'courseid' => $courseid,
+                'advertise' => true
+            ]
+        );
         $advertisebutton = new single_button($advertiseurl, get_string('advertise', 'tool_customhub'));
         $text .= $this->output->render($advertisebutton);
-        $text .= html_writer::tag('div', get_string('advertisepublication_help', 'tool_customhub'),
-            array('class' => 'publishhelp'));
+        $text .= html_writer::tag(
+            'div',
+            get_string('advertisepublication_help', 'tool_customhub'),
+            ['class' => 'publishhelp']
+        );
 
         $text .= html_writer::empty_tag('br');  /// TODO Delete
 
-        $uploadurl = new moodle_url("/admin/tool/customhub/hubselector.php",
-            array('sesskey' => sesskey(), 'id' => $courseid, 'share' => true));
+        $uploadurl = new moodle_url(
+            "/admin/tool/customhub/hubselector.php",
+            [
+                'sesskey' => sesskey(),
+                'id' => $courseid,
+                'courseid' => $courseid,
+                'share' => true
+            ]
+        );
         $uploadbutton = new single_button($uploadurl, get_string('share', 'tool_customhub'));
         $text .= $this->output->render($uploadbutton);
-        $text .= html_writer::tag('div', get_string('sharepublication_help', 'tool_customhub'),
-            array('class' => 'publishhelp'));
+        $text .= html_writer::tag(
+            'div',
+            get_string('sharepublication_help', 'tool_customhub'),
+            ['class' => 'publishhelp']
+        );
 
         return $text;
     }
@@ -115,23 +135,34 @@ class renderer extends plugin_renderer_base {
         $brtag = html_writer::empty_tag('br');
 
         foreach ($publications as $publication) {
+            // \local_hub\debug\local_hub_debug::write_to_file($publication, 'PublicationRENDERER ');
 
             $updatebuttonhtml = '';
 
-            $params = array('sesskey' => sesskey(), 'id' => $publication->courseid,
+            $params = [
+                'sesskey' => sesskey(),
+                'id' => $publication->courseid,
                 'hubcourseid' => $publication->hubcourseid,
-                'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
-                'cancel' => true, 'publicationid' => $publication->id,
-                'timepublished' => $publication->timepublished);
+                'huburl' => $publication->huburl,
+                'hubname' => $publication->hubname,
+                'cancel' => true,
+                'publicationid' => $publication->id,
+                'timepublished' => $publication->timepublished
+            ];
             $cancelurl = new moodle_url("/admin/tool/customhub/publishcourse.php", $params);
             $cancelbutton = new single_button($cancelurl, get_string('removefromhub', 'tool_customhub'));
             $cancelbutton->class = 'centeredbutton';
             $cancelbuttonhtml = $this->output->render($cancelbutton);
 
             if ($publication->enrollable) {
-                $params = array('sesskey' => sesskey(), 'id' => $publication->courseid,
-                    'huburl' => $publication->huburl, 'hubname' => $publication->hubname,
-                    'share' => !$publication->enrollable, 'advertise' => $publication->enrollable);
+                $params = [
+                    'sesskey' => sesskey(),
+                    'courseid' => $publication->courseid,
+                    'huburl' => $publication->huburl,
+                    'hubname' => $publication->hubname,
+                    'share' => !$publication->enrollable,
+                    'advertise' => $publication->enrollable,
+                ];
                 $updateurl = new moodle_url("/admin/tool/customhub/metadata.php", $params);
                 $updatebutton = new single_button($updateurl, get_string('update', 'tool_customhub'));
                 $updatebutton->class = 'centeredbutton';

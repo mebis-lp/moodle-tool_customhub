@@ -133,9 +133,6 @@ class registration_manager {
      */
     public function get_registeredhub($huburl, $allowmoodlenet = false) {
         global $DB;
-        if (!$allowmoodlenet) {
-            $this->is_moodlenet($huburl, true);
-        }
         return $DB->get_record('registration_hubs', ['huburl' => $huburl, 'confirmed' => 1]);
     }
 
@@ -147,7 +144,6 @@ class registration_manager {
      */
     public function get_unconfirmedhub($huburl) {
         global $DB;
-        $this->is_moodlenet($huburl, true);
         return $DB->get_record('registration_hubs', ['huburl' => $huburl, 'confirmed' => 0]);
     }
 
@@ -157,7 +153,6 @@ class registration_manager {
      */
     public function update_registeredhub($hub) {
         global $DB;
-        $this->is_moodlenet($hub->huburl, true);
         $hub->timemodified = time();
         $DB->update_record('registration_hubs', $hub);
     }
@@ -167,12 +162,7 @@ class registration_manager {
      */
     public function get_registered_on_hubs() {
         global $DB;
-        $hubs = $DB->get_records('registration_hubs', array('confirmed' => 1));
-        foreach ($hubs as $id => $hub) {
-            if ($this->is_moodlenet($hub->huburl)) {
-                unset($hubs[$id]);
-            }
-        }
+        $hubs = $DB->get_records('registration_hubs', ['confirmed' => 1]);
         return $hubs;
     }
 

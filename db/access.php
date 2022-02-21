@@ -31,7 +31,9 @@ $capabilities = array(
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/course:publish'
     ),

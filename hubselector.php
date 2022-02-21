@@ -24,11 +24,11 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
-$id = required_param('id', PARAM_INT);
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$courseid = required_param('courseid', PARAM_INT);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 require_login($course);
 
-$PAGE->set_url('/admin/tool/customhub/hubselector.php', array('id' => $course->id));
+$PAGE->set_url('/admin/tool/customhub/hubselector.php', ['courseid' => $course->id]);
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
@@ -43,11 +43,33 @@ if (empty($registeredhubs)) {
     die();
 }
 
-
 $share = optional_param('share', false, PARAM_BOOL);
 $advertise = optional_param('advertise', false, PARAM_BOOL);
-$hubselectorform = new tool_customhub\hub_publish_selector_form('',
-    array('id' => $id, 'share' => $share, 'advertise' => $advertise));
+
+if (count($registeredhubs) == 1) {
+    $registeredhub = array_shift($registeredhubs);
+    $params = [
+        'sesskey' => sesskey(),
+        'courseid' => $courseid,
+        'huburl' => $registeredhub->huburl,
+        'hubname' => $registeredhub->hubname,
+        'share' => $share,
+        'advertise' => $advertise,
+    ];
+    redirect(new moodle_url(
+        "/admin/tool/customhub/metadata.php",
+        $params
+    ));
+}
+
+$hubselectorform = new tool_customhub\hub_publish_selector_form(
+    '',
+    [
+        'courseid' => $courseid,
+        'share' => $share,
+        'advertise' => $advertise
+    ]
+);
 $fromform = $hubselectorform->get_data();
 
 //// Redirect to the registration form if an URL has been chosen ////
@@ -56,10 +78,18 @@ $huburl = optional_param('huburl', false, PARAM_URL);
 //redirect
 if (!empty($huburl) and confirm_sesskey()) {
     $hubname = optional_param(clean_param($huburl, PARAM_ALPHANUMEXT), '', PARAM_TEXT);
-    $params = array('sesskey' => sesskey(), 'id' => $id,
-        'huburl' => $huburl, 'hubname' => $hubname, 'share' => $share, 'advertise' => $advertise);
-    redirect(new moodle_url("/admin/tool/customhub/metadata.php",
-        $params));
+    $params = [
+        'sesskey' => sesskey(),
+        'courseid' => $courseid,
+        'huburl' => $huburl,
+        'hubname' => $hubname,
+        'share' => $share,
+        'advertise' => $advertise
+    ];
+    redirect(new moodle_url(
+        "/admin/tool/customhub/metadata.php",
+        $params
+    ));
 }
 
 
